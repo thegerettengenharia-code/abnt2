@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Ferramenta simples para ajustar a formatação de trabalhos acadêmicos às normas ABNT, mantendo a template enviada." />
+  <title>Formatador ABNT</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem("abnt-theme");
+        var prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+        document.documentElement.setAttribute("data-theme", saved || (prefersLight ? "light" : "dark"));
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Formatador ABNT, início">
+        <img class="brand__logo" src="/logo.jpg" alt="" aria-hidden="true" />
+        <span class="brand__name">Ferramenta Para a Formatação de Trabalhos Acadêmicos - Ferramenta Desenvolvida por 𝚃𝚑𝚎𝙶𝚎𝚛𝚎𝚝𝚝 - 𝚂𝚒𝚗𝚌𝚎 𝟷𝟿𝟾𝟼</span>
+      </a>
+      <button id="theme-toggle" class="icon-btn" type="button" aria-label="Alternar entre modo claro e escuro" title="Alternar tema">
+        <svg class="icon icon--sun" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+        </svg>
+        <svg class="icon icon--moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
+        </svg>
+      </button>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <img class="hero__img" src="/emblema.png" alt="Emblema acadêmico com graduada e louros" />
+        <p class="eyebrow">ABNT · NBR 14724</p>
+        <h1 id="hero-title">Seu trabalho, na formatação ABNT, sem perder a sua template.</h1>
+        <p class="hero__lead">
+          Envie o arquivo <strong>.docx</strong> (ou .pdf, até 50 MB) e receba uma cópia com as
+          correções de margens, fonte, espaçamento, recuos e paginação aplicadas. O conteúdo é
+          preservado.
+        </p>
+      </section>
+
+      <div id="file-warning" class="alert alert--warn" hidden>
+        <strong>Atenção:</strong> você abriu este arquivo direto no navegador.
+        O site precisa estar rodando pelo servidor. Use o <code>start.bat</code> e acesse
+        <code>http://localhost:8000</code>.
+      </div>
+
+      <form id="form" class="card" novalidate>
+        <div class="field">
+          <label class="label" for="dropzone">1. Envie seu documento</label>
+          <div id="dropzone" class="dropzone" tabindex="0" role="button"
+               aria-controls="file-input" aria-describedby="file-help">
+            <input id="file-input" name="file" type="file"
+                   accept=".docx,.pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf"
+                   hidden />
+            <svg class="dropzone__icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 16V4M12 4l-4 4M12 4l4 4"></path>
+              <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path>
+            </svg>
+            <p class="dropzone__text">
+              <strong>Arraste o arquivo aqui</strong> ou clique para escolher
+            </p>
+            <p id="file-help" class="dropzone__hint">.docx ou .pdf · até 50 MB</p>
+            <p id="file-name" class="dropzone__file" hidden></p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="font">2. Fonte do texto</label>
+          <select id="font" name="font" class="control">
+            <option value="Times New Roman" selected>Times New Roman 12</option>
+            <option value="Arial">Arial 12</option>
+          </select>
+          <p class="field__hint">Títulos em negrito; citações longas, notas, legendas e paginação em tamanho 10.</p>
+        </div>
+
+        <button id="submit" class="btn btn--primary btn--block" type="submit">
+          Formatar documento
+        </button>
+
+        <p class="privacy">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="privacy__icon">
+            <path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"></path>
+          </svg>
+          Seus arquivos sobem de forma temporária só para o processamento e são apagados logo em seguida.
+        </p>
+
+        <div id="progress" class="progress" hidden aria-hidden="true">
+          <div id="progress-bar" class="progress__bar"></div>
+        </div>
+        <p id="error" class="alert alert--error" role="alert" hidden></p>
+      </form>
+
+      <section id="result" class="card result" aria-labelledby="result-title" hidden>
+        <div class="result__header">
+          <span class="badge" aria-hidden="true">✓</span>
+          <div>
+            <h2 id="result-title">Documento pronto</h2>
+            <p class="result__sub">Confira o relatório e baixe a cópia corrigida.</p>
+          </div>
+        </div>
+
+        <a id="download" class="btn btn--primary btn--block" href="#" download>
+          Baixar documento corrigido
+        </a>
+
+        <div class="report">
+          <article class="report__block">
+            <h3>O que foi encontrado</h3>
+            <ul id="found" class="chips"></ul>
+          </article>
+          <article class="report__block">
+            <h3>Correções aplicadas</h3>
+            <ul id="changes" class="stats"></ul>
+          </article>
+          <article class="report__block">
+            <h3>Pendências e revisão manual</h3>
+            <ul id="pending" class="notes"></ul>
+          </article>
+        </div>
+
+        <p class="warning">
+          Revise o resultado final. Se o manual da sua instituição divergir da ABNT, ele tem prioridade.
+        </p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Feito para ajustar formatação — o conteúdo e o sentido do seu texto não são alterados.</p>
+    </footer>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>
